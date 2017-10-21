@@ -1,4 +1,13 @@
-# Webpack Starter
+# MidiKeys
+> Uses WebMIDI to pipe MIDI messages into a browser
+
+### NOTES:
+Built to run in browser with global variable available via `<script>` load. Special setup as follows:
+* Set entry to './src/midi-keys.js'
+* Added output options (from: https://www.made-on-mars.com/blog/how-to-create-a-npm-module-that-works-on-browser-with-webpack-2/):
+  * libraryTarget: 'umd'
+
+# Built with Webpack Starter
 > Starter template for web development without a framework
 
 To use:
