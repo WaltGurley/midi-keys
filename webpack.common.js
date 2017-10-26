@@ -9,7 +9,7 @@ const extractSass = new ExtractTextPlugin({
 
 module.exports = {
   entry: {
-    midiKeys: './src/midi-keys.js'
+    'midi-keys': './src/midi-keys.js'
   },
   output: {
     filename: '[name].bundle.js',

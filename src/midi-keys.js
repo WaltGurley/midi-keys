@@ -15,6 +15,7 @@ function midiMessageSetup () {
   function playNote (frequency) {
     oscillators[frequency] = context.createOscillator()
     gain[frequency] = context.createGain()
+    gain[frequency].gain.value = 0.1
     oscillators[frequency].frequency.value = frequency
     oscillators[frequency].connect(gain[frequency])
     gain[frequency].connect(context.destination)
@@ -102,10 +103,10 @@ function connect () {
 }
 
 const midiKeys = {
+  connect,
   connected: false,
   inputs: null,
   outputs: null,
-  connect,
   midiMsg: null,
   frequency: null,
   oscillatorOn: false
