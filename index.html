@@ -7,6 +7,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>No Framework Template</title>
   </head>
+  <style media="screen">
+    body {
+      margin: 0;
+    }
+  </style>
   <body>
+    <main id="main">
+
+    </main>
   </body>
+  <script src='./midi-keys.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/addons/p5.sound.js'></script>
+  <script>
+
+    let midiFFT = null
+    let wave = null
+    midiKeys.oscillatorOn = true
+    midiKeys.connect().then(function () {
+      midiFFT = midiKeys.analyser
+    })
+
+    function setup() {
+      background(100);
+      createCanvas(window.innerWidth, window.innerHeight)
+    }
+
+    let t = 0;
+    function draw() {
+      background(0);
+      // ellipse(map(midiKeys.frequency || 0, 130, 2093, 0, width), height/2, 20, 20);
+      // console.log(an);
+      if (t % (60 / 10) === 0) {
+      wave = midiFFT.getWaveform()
+      }
+        drawWaveform()
+      const spectrum = midiFFT.getSpectrum()
+      // Set the stroke color to white
+      stroke(255)
+      // Turn off fill
+      noFill()
+
+       spectrum.forEach(function (amp, i) {
+      		const x = i / spectrum.length * width
+      		const rectWidth = width / spectrum.length
+      		const rectHeight = amp / 255 * height
+      		rect(x, 0, rectWidth, rectHeight)
+      	})
+      t++
+    }
+
+  function drawWaveform() {
+  // Start drawing a shape
+  beginShape()
+    // Create a for-loop to draw a the connecting points of the shape of the input sound
+    wave.forEach(function (amp, i) {
+    const x = i / wave.length * width
+    const y = map(amp, 0, 255, 0, height)
+    vertex(x, y)
+    })
+  // End the shape
+  endShape()
+}
+
+    function mouseClicked () {
+      // console.log(width, height);
+      // source.input.context.resume()
+      // source.output.context.resume()
+    }
+  </script>
 </html>

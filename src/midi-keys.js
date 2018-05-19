@@ -4,9 +4,32 @@ function midiMessageSetup () {
   }
 
   // variables only for oscillator if enabled
-  let context = new AudioContext()
-  let oscillators = {}
-  let gain = {}
+  const context = new AudioContext()
+  const oscillators = {}
+  const gain = {}
+
+  const masterGain = context.createGain()
+  masterGain.gain.value = 0.1
+
+  const analyser = context.createAnalyser()
+  masterGain.connect(analyser)
+  analyser.fftSize = 2048
+  var bufferLength = analyser.frequencyBinCount
+  var waveform = new Uint8Array(bufferLength)
+  var spectrum = new Uint8Array(bufferLength)
+
+  midiKeys.audioContext = context
+  midiKeys.analyser = {
+    'analyser': analyser,
+    'getWaveform': function () {
+      analyser.getByteTimeDomainData(waveform)
+      return waveform
+    },
+    'getSpectrum': function () {
+      analyser.getByteFrequencyData(spectrum)
+      return spectrum
+    }
+  }
 
   function convertMidiToFrequency (midiNote) {
     return Math.pow(2, ((midiNote - 69) / 12)) * 440
@@ -15,15 +38,16 @@ function midiMessageSetup () {
   function playNote (frequency) {
     oscillators[frequency] = context.createOscillator()
     gain[frequency] = context.createGain()
-    gain[frequency].gain.value = 0.1
+    gain[frequency].gain.value = 1
     oscillators[frequency].frequency.value = frequency
     oscillators[frequency].connect(gain[frequency])
-    gain[frequency].connect(context.destination)
+    gain[frequency].connect(masterGain)
+    masterGain.connect(context.destination)
     oscillators[frequency].start(context.currentTime)
   }
 
   function stopNote (frequency) {
-    gain[frequency].gain.value = 0
+    gain[frequency].gain.linearRampToValueAtTime(0, context.currentTime + 0.1)
     oscillators[frequency].stop(context.currentTime + 0.1)
   }
 
@@ -42,7 +66,7 @@ function midiMessageSetup () {
 
     midiKeys.midiMsg = message.data
     midiKeys.frequency = frequency
-    console.log(midiKeys.midiMsg, midiKeys.frequency)
+    // console.log(midiKeys.audioContext)
   }
 
   midiKeys.inputs.forEach(function (device) {
@@ -109,6 +133,8 @@ const midiKeys = {
   outputs: null,
   midiMsg: null,
   frequency: null,
+  audioContext: null,
+  analyser: null,
   oscillatorOn: false
 }
 
