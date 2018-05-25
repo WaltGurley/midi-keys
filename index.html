@@ -21,21 +21,23 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/addons/p5.sound.js'></script>
   <script>
-
+    const context2 = new AudioContext()
     let midiFFT = null
     let wave = null
-    midiKeys.oscillatorOn = true
     midiKeys.connect().then(function () {
+      // midiKeys.oscillatorOn = true
       midiFFT = midiKeys.analyser
     })
 
     function setup() {
       background(100);
       createCanvas(window.innerWidth, window.innerHeight)
+      midiKeys.oscillatorOn = true
     }
 
     let t = 0;
     function draw() {
+      if (!midiFFT) return
       background(0);
       // ellipse(map(midiKeys.frequency || 0, 130, 2093, 0, width), height/2, 20, 20);
       // console.log(an);

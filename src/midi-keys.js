@@ -1,7 +1,5 @@
 function midiMessageSetup () {
-  if (!midiKeys.connected) {
-    return
-  }
+  if (!midiKeys.connected) return
 
   // variables only for oscillator if enabled
   const context = new AudioContext()
